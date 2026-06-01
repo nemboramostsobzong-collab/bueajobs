@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 const { v4: uuidv4 } = require('uuid');
 const multer = require('multer');
 
@@ -39,16 +39,8 @@ const DB = {
   }
 };
 
-// ─── Email Transporter ────────────────────────────────────────
-// IMPORTANT: Replace with your Gmail App Password (not your main password)
-// Go to Google Account > Security > 2-Step Verification > App Passwords
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: 'nemboramostsobzong@gmail.com',
-    pass: process.env.EMAIL_PASS || 'YOUR_APP_PASSWORD_HERE'
-  }
-});
+// ─── Resend Email Client ──────────────────────────────────────
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const ADMIN_EMAIL = 'nemboramostsobzong@gmail.com';
 
@@ -107,8 +99,8 @@ app.post('/api/jobs', (req, res) => {
   DB.write('jobs.json', db);
 
   // Notify admin
-  transporter.sendMail({
-    from: ADMIN_EMAIL,
+  resend.emails.send({
+    from: 'BuéaJobs <onboarding@resend.dev>',
     to: ADMIN_EMAIL,
     subject: `🆕 New Job Posted: ${title} at ${company}`,
     html: `
@@ -153,8 +145,8 @@ app.post('/api/apply', upload.single('cv'), (req, res) => {
   DB.write('applications.json', db);
 
   // Notify admin
-  transporter.sendMail({
-    from: ADMIN_EMAIL,
+  resend.emails.send({
+    from: 'BuéaJobs <onboarding@resend.dev>',
     to: ADMIN_EMAIL,
     subject: `📨 New Application: ${fullName} → ${job.title}`,
     html: `

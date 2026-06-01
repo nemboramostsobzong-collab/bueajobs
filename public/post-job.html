@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Post a Job – BuéaJobs</title>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="container">
+      <a href="index.html" class="nav-logo">Buéa<span>Jobs</span></a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="listings.html">Find Jobs</a></li>
+        <li><a href="post-job.html" class="nav-cta active">Post a Job</a></li>
+      </ul>
+      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+  <div class="page-hero">
+    <div class="container">
+      <h1>📢 Post a Job</h1>
+      <p>Reach hundreds of qualified youth in Buea. Fill in the details below.</p>
+    </div>
+  </div>
+
+  <section class="section" style="padding-top:40px;">
+    <div class="container" style="max-width:720px;">
+      <div class="form-card">
+
+        <div class="form-section-title">Company Information</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Company Name <span>*</span></label>
+            <input type="text" id="company" class="form-control" placeholder="e.g. TechBridge Buea">
+          </div>
+          <div class="form-group">
+            <label>Contact Email <span>*</span></label>
+            <input type="email" id="contactEmail" class="form-control" placeholder="hr@yourcompany.com">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>About Your Company <span>*</span></label>
+          <textarea id="companyAbout" class="form-control" rows="3" placeholder="Brief description of your company..."></textarea>
+        </div>
+
+        <div class="form-section-title" style="margin-top:8px;">Job Details</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Job Title <span>*</span></label>
+            <input type="text" id="title" class="form-control" placeholder="e.g. Graphic Designer">
+          </div>
+          <div class="form-group">
+            <label>Category <span>*</span></label>
+            <select id="category" class="form-control">
+              <option value="">Select category</option>
+              <option>Cleaning</option>
+              <option>Housekeeping</option>
+              <option>Wellness</option>
+              <option>Design</option>
+              <option>Technology</option>
+              <option>Education</option>
+              <option>Business</option>
+              <option>Marketing</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Job Type <span>*</span></label>
+            <select id="type" class="form-control">
+              <option value="">Select type</option>
+              <option>Full-Time</option>
+              <option>Part-Time</option>
+              <option>Freelance</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Experience Level</label>
+            <select id="experience" class="form-control">
+              <option>No Experience Required</option>
+              <option>Entry Level</option>
+              <option>1 Year Experience</option>
+              <option>1–2 Years</option>
+              <option>2–5 Years</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Salary / Pay</label>
+            <input type="text" id="salary" class="form-control" placeholder="e.g. 80,000 – 100,000 FCFA/month">
+          </div>
+          <div class="form-group">
+            <label>Application Deadline</label>
+            <input type="date" id="deadline" class="form-control">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Location</label>
+          <input type="text" id="location" class="form-control" value="Buea, SW Region">
+        </div>
+        <div class="form-group">
+          <label>Job Description <span>*</span></label>
+          <textarea id="description" class="form-control" rows="5" placeholder="Describe the role, responsibilities, and what you're looking for..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Requirements</label>
+          <textarea id="requirements" class="form-control" rows="4" placeholder="One requirement per line:&#10;Must have good communication skills&#10;Able to work independently&#10;..."></textarea>
+          <div class="form-hint">Enter each requirement on a new line.</div>
+        </div>
+
+        <button class="btn btn-amber btn-block btn-lg" id="postBtn" onclick="postJob()">
+          Post Job →
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom" style="border-top:none; padding-top:0;">
+        <p>© 2025 BuéaJobs. Built for Buea's Youth.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/script.js"></script>
+  <script>
+    function postJob() {
+      const fields = {
+        title: document.getElementById('title').value.trim(),
+        company: document.getElementById('company').value.trim(),
+        contactEmail: document.getElementById('contactEmail').value.trim(),
+        category: document.getElementById('category').value,
+        type: document.getElementById('type').value,
+        experience: document.getElementById('experience').value,
+        salary: document.getElementById('salary').value.trim(),
+        deadline: document.getElementById('deadline').value,
+        location: document.getElementById('location').value.trim(),
+        description: document.getElementById('description').value.trim(),
+        requirements: document.getElementById('requirements').value.trim(),
+        companyAbout: document.getElementById('companyAbout').value.trim()
+      };
+
+      if (!fields.title || !fields.company || !fields.contactEmail || !fields.description || !fields.category || !fields.type) {
+        showToast('Please fill in all required fields.', 'error');
+        return;
+      }
+
+      const btn = document.getElementById('postBtn');
+      btn.textContent = 'Posting...';
+      btn.disabled = true;
+
+      fetch('/api/jobs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(fields)
+      })
+        .then(r => r.json())
+        .then(data => {
+          if (data.success) {
+            showToast('Job posted successfully! 🎉', 'success');
+            setTimeout(() => location.href = 'listings.html', 1500);
+          } else {
+            showToast(data.message || 'Something went wrong.', 'error');
+            btn.textContent = 'Post Job →';
+            btn.disabled = false;
+          }
+        })
+        .catch(() => {
+          showToast('Network error. Make sure the server is running.', 'error');
+          btn.textContent = 'Post Job →';
+          btn.disabled = false;
+        });
+    }
+  </script>
+</body>
+</html>

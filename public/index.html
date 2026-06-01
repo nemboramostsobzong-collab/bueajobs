@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BuéaJobs – Find Your Opportunity</title>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="index.html" class="nav-logo">Buéa<span>Jobs</span></a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="listings.html">Find Jobs</a></li>
+        <li><a href="post-job.html" class="nav-cta">Post a Job</a></li>
+      </ul>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-badge">🌍 Buea's #1 Youth Job Platform</div>
+      <h1>Connecting <span>Talent</span> with<br>Opportunity in Buea</h1>
+      <p>Thousands of graduates, one platform. Discover internships, entry-level roles, and freelance gigs from local businesses and startups right here in Buea.</p>
+      <div class="hero-actions">
+        <a href="listings.html" class="btn btn-amber btn-lg">🔍 Browse Jobs</a>
+        <a href="post-job.html" class="btn btn-outline btn-lg">Post a Job</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><h3 id="statJobs">—</h3><p>Active Listings</p></div>
+        <div class="hero-stat"><h3>85+</h3><p>Local Employers</p></div>
+        <div class="hero-stat"><h3>500+</h3><p>Students Helped</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="section" style="background: var(--dark2);">
+    <div class="container">
+      <div class="section-title">
+        <h2>Why Use BuéaJobs?</h2>
+        <p>Built specifically for Buea's youth and local businesses. No more WhatsApp rumours.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">📋</div>
+          <h3>Centralized Listings</h3>
+          <p>All local job and internship opportunities in one place — no more chasing WhatsApp groups.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎓</div>
+          <h3>Entry-Level Friendly</h3>
+          <p>Employers on our platform understand you're starting out. No 5-year experience required.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🏢</div>
+          <h3>Local Businesses</h3>
+          <p>Connect with Buea's startups, NGOs, and growing SMEs looking for affordable digital talent.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>Quick Applications</h3>
+          <p>Apply in minutes with your CV and contact info. Employers respond fast through the platform.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LATEST JOBS -->
+  <section class="section" style="background: var(--dark);">
+    <div class="container">
+      <div class="section-title">
+        <h2>Latest Opportunities</h2>
+        <p>Fresh listings from Buea's top employers, updated regularly.</p>
+      </div>
+      <div class="jobs-grid" id="latestJobs">
+        <div class="loading"><div class="spinner"></div><p>Loading jobs...</p></div>
+      </div>
+      <div style="text-align:center; margin-top:40px;">
+        <a href="listings.html" class="btn btn-primary btn-lg">View All Jobs →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="container">
+      <h2>Ready to Take the First Step?</h2>
+      <p>Whether you're a job seeker or an employer, BuéaJobs is your bridge to opportunity.</p>
+      <div class="cta-actions">
+        <a href="listings.html" class="btn btn-amber btn-lg">Browse All Jobs</a>
+        <a href="post-job.html" class="btn btn-outline btn-lg">I'm an Employer</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="nav-logo">Buéa<span>Jobs</span></a>
+          <p>Bridging the gap between skilled youth and local employers in Buea, Cameroon.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Job Seekers</h4>
+          <ul><li><a href="listings.html">Browse Jobs</a></li></ul>
+        </div>
+        <div class="footer-col">
+          <h4>Employers</h4>
+          <ul><li><a href="post-job.html">Post a Job</a></li></ul>
+        </div>
+        <div class="footer-col">
+          <h4>Platform</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="listings.html">Listings</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 BuéaJobs. Built for Buea's Youth.</p>
+        <p>Made with ❤️ in Buea, Cameroon</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/script.js"></script>
+  <script>
+    // Load latest jobs
+    fetch('/api/jobs')
+      .then(r => r.json())
+      .then(data => {
+        const container = document.getElementById('latestJobs');
+        const jobs = data.jobs.slice(0, 3);
+        document.getElementById('statJobs').textContent = data.count + '+';
+
+        if (!jobs.length) {
+          container.innerHTML = '<div class="empty-state"><div class="empty-icon">💼</div><h3>No jobs yet</h3><p>Check back soon!</p></div>';
+          return;
+        }
+
+        container.innerHTML = jobs.map(job => `
+          <div class="job-card" onclick="location.href='job.html?id=${job.id}'">
+            <div class="job-card-header">
+              <div>
+                <div class="job-company">${job.company}</div>
+                <div class="job-title">${job.title}</div>
+              </div>
+              <span class="job-badge ${getBadgeClass(job.type)}">${job.type}</span>
+            </div>
+            <div class="job-meta">
+              <span class="job-meta-item">📍 ${job.location}</span>
+              <span class="job-meta-item">🏷️ ${job.category}</span>
+              <span class="job-meta-item">⭐ ${job.experience}</span>
+            </div>
+            <div class="job-salary">💰 ${job.salary}</div>
+            <div class="job-card-footer">
+              <span class="job-deadline">Deadline: ${formatDate(job.deadline)}</span>
+              <span class="btn btn-sm btn-primary">View →</span>
+            </div>
+          </div>
+        `).join('');
+      })
+      .catch(() => {
+        document.getElementById('latestJobs').innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><h3>Could not load jobs</h3><p>Make sure the server is running.</p></div>';
+      });
+  </script>
+</body>
+</html>

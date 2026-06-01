@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Find Jobs – BuéaJobs</title>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="container">
+      <a href="index.html" class="nav-logo">Buéa<span>Jobs</span></a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="listings.html" class="active">Find Jobs</a></li>
+        <li><a href="post-job.html" class="nav-cta">Post a Job</a></li>
+      </ul>
+      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+  <div class="page-hero">
+    <div class="container">
+      <h1>🔍 Find Jobs in Buea</h1>
+      <p>Browse all available positions from local employers and startups.</p>
+    </div>
+  </div>
+
+  <section class="section" style="padding-top:40px;">
+    <div class="container">
+
+      <!-- Filters -->
+      <div class="filters-bar">
+        <input type="text" class="filter-input" id="searchInput" placeholder="🔎 Search job title, company...">
+        <select class="filter-select" id="categoryFilter">
+          <option value="all">All Categories</option>
+          <option value="Cleaning">Cleaning</option>
+          <option value="Housekeeping">Housekeeping</option>
+          <option value="Wellness">Wellness</option>
+          <option value="Design">Design</option>
+          <option value="Technology">Technology</option>
+          <option value="Education">Education</option>
+          <option value="Business">Business</option>
+          <option value="Other">Other</option>
+        </select>
+        <select class="filter-select" id="typeFilter">
+          <option value="all">All Types</option>
+          <option value="Full-Time">Full-Time</option>
+          <option value="Part-Time">Part-Time</option>
+          <option value="Freelance">Freelance</option>
+        </select>
+        <button class="btn btn-primary" onclick="loadJobs()">Apply Filters</button>
+      </div>
+
+      <div class="results-count" id="resultsCount"></div>
+      <div class="jobs-grid" id="jobsGrid">
+        <div class="loading"><div class="spinner"></div><p>Loading jobs...</p></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom" style="border-top:none; padding-top:0;">
+        <p>© 2025 BuéaJobs. Built for Buea's Youth.</p>
+        <p>Made with ❤️ in Buea, Cameroon</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/script.js"></script>
+  <script>
+    function loadJobs() {
+      const search = document.getElementById('searchInput').value;
+      const category = document.getElementById('categoryFilter').value;
+      const type = document.getElementById('typeFilter').value;
+
+      const params = new URLSearchParams();
+      if (search) params.set('search', search);
+      if (category !== 'all') params.set('category', category);
+      if (type !== 'all') params.set('type', type);
+
+      const grid = document.getElementById('jobsGrid');
+      grid.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading...</p></div>';
+
+      fetch(`/api/jobs?${params}`)
+        .then(r => r.json())
+        .then(data => {
+          document.getElementById('resultsCount').textContent = `${data.count} job${data.count !== 1 ? 's' : ''} found`;
+
+          if (!data.jobs.length) {
+            grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🔍</div><h3>No jobs found</h3><p>Try adjusting your filters</p></div>`;
+            return;
+          }
+
+          grid.innerHTML = data.jobs.map(job => `
+            <div class="job-card" onclick="location.href='job.html?id=${job.id}'">
+              <div class="job-card-header">
+                <div>
+                  <div class="job-company">${job.company}</div>
+                  <div class="job-title">${job.title}</div>
+                </div>
+                <span class="job-badge ${getBadgeClass(job.type)}">${job.type}</span>
+              </div>
+              <div class="job-meta">
+                <span class="job-meta-item">📍 ${job.location}</span>
+                <span class="job-meta-item">🏷️ ${job.category}</span>
+                <span class="job-meta-item">⭐ ${job.experience}</span>
+              </div>
+              <div class="job-salary">💰 ${job.salary}</div>
+              <div class="job-card-footer">
+                <span class="job-deadline">Deadline: ${formatDate(job.deadline)}</span>
+                <span class="btn btn-sm btn-primary">View →</span>
+              </div>
+            </div>
+          `).join('');
+        })
+        .catch(() => {
+          grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">⚠️</div><h3>Server error</h3><p>Make sure the server is running.</p></div>';
+        });
+    }
+
+    // Search on Enter
+    document.getElementById('searchInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') loadJobs();
+    });
+
+    loadJobs();
+  </script>
+</body>
+</html>
